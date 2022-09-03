@@ -34,7 +34,7 @@ public class LoginFrame extends JFrame implements MouseListener{
 		this.getContentPane().setBackground(Color.LIGHT_GRAY);
 		
 		loginPanel = new JPanel();
-		loginPanel.setBounds(0, 0, FRAME_WIDTH-15, (int)(FRAME_HEIGHT/8));
+		loginPanel.setBounds(0, 0, FRAME_WIDTH, (int)(FRAME_HEIGHT/8));
 		//loginPanel.setPreferredSize(new Dimension(FRAME_WIDTH, (int)(FRAME_HEIGHT/10)));
 		loginPanel.setBackground(Color.DARK_GRAY);
 		loginPanel.setLayout(null);
@@ -55,7 +55,7 @@ public class LoginFrame extends JFrame implements MouseListener{
 		xLabel = new JLabel("x");
 		xLabel.setForeground(Color.black);
 		
-		xLabel.setBounds(460, 10, 17, 17);
+		xLabel.setBounds(470, 10, 17, 17);
 		//xLabel.setHorizontalAlignment(JLabel.RIGHT);
 		xLabel.setHorizontalTextPosition(JLabel.CENTER);
 		xLabel.setFont(new Font("Tahoma",Font.BOLD,18));
@@ -85,7 +85,7 @@ public class LoginFrame extends JFrame implements MouseListener{
 		
 		redLabel = new JLabel("-");
 		redLabel.setForeground(Color.black);
-		redLabel.setBounds(440, 10, 17, 17);
+		redLabel.setBounds(450, 10, 17, 17);
 		//xLabel.setHorizontalAlignment(JLabel.RIGHT);
 		//xLabel.setVerticalAlignment(JLabel.RIGHT);
 		redLabel.setFont(new Font("Tahoma",Font.BOLD,24));
