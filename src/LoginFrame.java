@@ -248,6 +248,7 @@ public class LoginFrame extends JFrame implements MouseListener, ActionListener{
 					rs = ps.executeQuery();
 					if(rs.next()) { // rs.next() -> rs is empty or not ?
 						Menu menu = new Menu();
+						menu.welcomeLabel.setText("Welcome "+rs.getString(1));// FROM * get the first field which is the name
 						menu.setVisible(true);
 						this.dispose();
 					}
