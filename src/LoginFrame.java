@@ -1,13 +1,12 @@
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
+import java.sql.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 
 
-public class LoginFrame extends JFrame implements MouseListener{
+public class LoginFrame extends JFrame implements MouseListener, ActionListener{
 	
 	static final int FRAME_WIDTH = 500;
 	static final int FRAME_HEIGHT = 500;
@@ -143,6 +142,7 @@ public class LoginFrame extends JFrame implements MouseListener{
 		loginButton.setFont(new Font("Ink Free", Font.BOLD,22));
 		loginButton.setBounds((int)(FRAME_WIDTH/3.5), (int)(FRAME_HEIGHT/2), 200, 40);
 		loginButton.addMouseListener(this);
+		loginButton.addActionListener(this);
 		
 		registerLabel = new JLabel(">> No account ? Create One");
 		registerLabel.setForeground(Color.red);
@@ -220,6 +220,49 @@ public class LoginFrame extends JFrame implements MouseListener{
 	public void mouseExited(MouseEvent e) {
 		loginButton.setBackground(Color.green);
 		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource()==loginButton) {
+			if(checkEmptyFields()) {
+				JOptionPane.showMessageDialog(null, "Please enter your username and your password","Missing information",JOptionPane.ERROR_MESSAGE);
+			}
+			else {
+				// we need two objects for the connection with data base:
+				PreparedStatement ps; // send query
+				ResultSet rs; // execute query
+				
+				// Stock the values entered in the TextFields:
+				String username = usernameText.getText();
+				String password = passwordText.getText();
+				
+				// the query:				
+				String query = "SELECT * FROM users.users WHERE username=? AND password=?"; //DataBase : users/ table: users/ WHERE-> condition/ username and password in DB/ ?: ps.setString() 
+				
+				// execute the query in the data base "users"
+				try {
+					ps = ConnectionDataBase.getConnection().prepareStatement(query);
+					ps.setString(1, username);
+					ps.setString(2, password);
+					rs = ps.executeQuery();
+					if(rs.next()) { // rs.next() -> rs is empty or not ?
+						Menu menu = new Menu();
+						menu.setVisible(true);
+						this.dispose();
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "No user with this username or password", "incorrecte data", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (SQLException e1) {
+					JOptionPane.showMessageDialog(null, "Connection failed with DataBase", "ERROR", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+		
+	}
+	private boolean checkEmptyFields() {
+		return (usernameText.getText().equals("") || passwordText.getText().equals(""));
 	}
 
 }
