@@ -5,9 +5,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class RegisterFrame extends JFrame implements ActionListener, MouseListener{
@@ -26,11 +28,13 @@ public class RegisterFrame extends JFrame implements ActionListener, MouseListen
 	
 	JTextField nameText;
 	JTextField usernameText;
-	JTextField passwordText;
-	JTextField confirmPasswordText;
 	JTextField phoneText;
 	JTextField mailText;
-	JTextField[] allTextFields = {nameText, usernameText, passwordText, confirmPasswordText, phoneText, mailText};
+	JTextField[] allTextFields = {nameText, usernameText, phoneText, mailText};
+	
+	JPasswordField confirmPasswordText;
+	JPasswordField passwordText;
+	JPasswordField[] passwords = {passwordText, confirmPasswordText};
 	
 	JButton registerButton;
 	JButton imageButton;
@@ -134,10 +138,10 @@ public class RegisterFrame extends JFrame implements ActionListener, MouseListen
 		allLabels = new JLabel[8];
 		allLabels[0] = new JLabel("Name :");
 		allLabels[1] = new JLabel("Username :");
-		allLabels[2] = new JLabel("Password :");
-		allLabels[3] = new JLabel("Confirm password :");
-		allLabels[4] = new JLabel("Phone :");
-		allLabels[5] = new JLabel("Mail :");
+		allLabels[4] = new JLabel("Password :");
+		allLabels[5] = new JLabel("Confirm password :");
+		allLabels[2] = new JLabel("Phone :");
+		allLabels[3] = new JLabel("Mail :");
 		allLabels[6] = new JLabel("Gender :");
 		allLabels[7] = new JLabel("Image :");
 		for(int i =0; i<allLabels.length;i++) {
@@ -155,6 +159,15 @@ public class RegisterFrame extends JFrame implements ActionListener, MouseListen
 			Border textFieldBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE);
 			allTextFields[i].setBorder(textFieldBorder);
 			this.add(allTextFields[i]);
+		}
+		for(int i = 0; i<passwords.length;i++) {
+			passwords[i] = new JPasswordField(10);
+			passwords[i].setBounds((int)(FRAME_WIDTH/2), (int)(FRAME_HEIGHT/6)+160+i*40, 200, 22);
+			passwords[i].setFont(new Font("Ink Free", Font.PLAIN, 18));
+			passwords[i].setHorizontalAlignment(JTextField.CENTER);
+			Border textFieldBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE);
+			passwords[i].setBorder(textFieldBorder);
+			this.add(passwords[i]);
 		}
 		
 		maleButton = new JRadioButton("Male");
@@ -175,6 +188,7 @@ public class RegisterFrame extends JFrame implements ActionListener, MouseListen
 		imageButton.setBounds((int)(FRAME_WIDTH/2), (int)(FRAME_HEIGHT/6)+280, 150, 22);
 		imageButton.setFocusable(false);
 		imageButton.setVerticalTextPosition(JTextField.CENTER);
+		imageButton.addActionListener(this);
 		
 		imagePathLabel = new JLabel("Image path");
 		imagePathLabel.setBounds(0, (int)(FRAME_HEIGHT/6)+300, FRAME_WIDTH, 20);
@@ -189,6 +203,7 @@ public class RegisterFrame extends JFrame implements ActionListener, MouseListen
 		registerButton.setFont(new Font("Ink Free", Font.BOLD,22));
 		registerButton.setBounds((int)(FRAME_WIDTH/3.5), (int)(FRAME_HEIGHT/6)+330, 200, 40);
 		registerButton.addMouseListener(this);
+		registerButton.addActionListener(this);
 		
 		loginLabel = new JLabel(">> Already have an account ? Login");
 		loginLabel.setForeground(Color.red);
@@ -223,10 +238,32 @@ public class RegisterFrame extends JFrame implements ActionListener, MouseListen
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		if(e.getSource() == imageButton) {
+			JFileChooser chooser = new JFileChooser();
+			FileNameExtensionFilter filer = new FileNameExtensionFilter("Images", "jpeg","png", "jpg");// we need to appear just the images 
+			chooser.addChoosableFileFilter(filer);
+			
+			chooser.setDialogTitle("Choose your image"); 
+			
+			int fileState = chooser.showDialog(null, "OK"); // this method return an integer from what we click
+			if(fileState == JFileChooser.APPROVE_OPTION) {// "OK" button is the approve button
+				// if we press "OK", we stock the image in a file 
+				File selectedImage = chooser.getSelectedFile();
+				// we stock also its path:
+				String pathSelectedImage = selectedImage.getAbsolutePath();
+				// we put it in the text label
+				imagePathLabel.setText(pathSelectedImage);
+			}
+		}
+		if(e.getSource()==registerButton) {
+			
+		}
 		
 	}
-
+	private boolean checkEmptyFilds() {
+		
+		return false;
+	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
