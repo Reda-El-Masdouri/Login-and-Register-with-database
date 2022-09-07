@@ -6,6 +6,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.sql.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -30,7 +34,7 @@ public class RegisterFrame extends JFrame implements ActionListener, MouseListen
 	JTextField usernameText;
 	JTextField phoneText;
 	JTextField mailText;
-	JTextField[] allTextFields = {nameText, usernameText, phoneText, mailText};
+	
 	
 	JPasswordField confirmPasswordText;
 	JPasswordField passwordText;
@@ -138,10 +142,10 @@ public class RegisterFrame extends JFrame implements ActionListener, MouseListen
 		allLabels = new JLabel[8];
 		allLabels[0] = new JLabel("Name :");
 		allLabels[1] = new JLabel("Username :");
-		allLabels[4] = new JLabel("Password :");
-		allLabels[5] = new JLabel("Confirm password :");
 		allLabels[2] = new JLabel("Phone :");
 		allLabels[3] = new JLabel("Mail :");
+		allLabels[4] = new JLabel("Password :");
+		allLabels[5] = new JLabel("Confirm password :");
 		allLabels[6] = new JLabel("Gender :");
 		allLabels[7] = new JLabel("Image :");
 		for(int i =0; i<allLabels.length;i++) {
@@ -151,6 +155,7 @@ public class RegisterFrame extends JFrame implements ActionListener, MouseListen
 			allLabels[i].setHorizontalAlignment(JLabel.RIGHT);
 			this.add(allLabels[i]);
 		}
+		JTextField[] allTextFields = {nameText, usernameText, phoneText, mailText};
 		for(int i = 0; i<allTextFields.length;i++) {
 			allTextFields[i] = new JTextField();
 			allTextFields[i].setBounds((int)(FRAME_WIDTH/2), (int)(FRAME_HEIGHT/6)+i*40, 200, 22);
@@ -256,13 +261,66 @@ public class RegisterFrame extends JFrame implements ActionListener, MouseListen
 			}
 		}
 		if(e.getSource()==registerButton) {
-			
+			if(checkEmptyFileds()) {
+				JOptionPane.showConfirmDialog(null, "Please enter your information", "Missing data", JOptionPane.ERROR_MESSAGE);
+			}
+			else {
+				String name = nameText.getText();
+				String username = usernameText.getText();
+				String password = String.valueOf(passwordText.getPassword());
+				String confirmPassword = String.valueOf(confirmPasswordText.getPassword());
+				String phone = phoneText.getText();
+				String mail = mailText.getText();
+				String gender = "Male";
+				if(femaleButton.isSelected()) {
+					gender = "Female";
+				}
+				if(!matchingPasswords(password,confirmPassword)) {
+					JOptionPane.showMessageDialog(null, "The passwords doesn't match", "Passwords !", JOptionPane.ERROR_MESSAGE);
+				}
+				else {
+					PreparedStatement ps;
+					String query = "INSERT INTO users.users (name, username,password,phone,mail, gender, image) values (?,?,?,?,?,?,?)";
+					
+					try {
+						ps = ConnectionDataBase.getConnection().prepareStatement(query);
+						ps.setString(1, name);
+						ps.setString(2, username);
+						ps.setString(3, password);
+						ps.setString(4, phone);
+						ps.setString(5, mail);
+						ps.setString(6, gender);
+						
+						InputStream image = new FileInputStream(new File(imagePathLabel.getText()));
+						ps.setBlob(7, image);
+						if(ps.executeUpdate() != 0) {// the query worked
+							JOptionPane.showMessageDialog(null, "Your account has been created", "Success", JOptionPane.PLAIN_MESSAGE);
+							}
+						else {
+							JOptionPane.showMessageDialog(null, "Your account has not been created", "ERROR", JOptionPane.ERROR_MESSAGE);
+						}
+					} catch (SQLException e1) {
+						JOptionPane.showMessageDialog(null, "Coonection failed with data base", "ERROR", JOptionPane.ERROR_MESSAGE);
+					} catch (FileNotFoundException e1) {
+						JOptionPane.showMessageDialog(null, "The account image has not copied to data base", "ERROR", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
 		}
 		
 	}
-	private boolean checkEmptyFilds() {
-		
-		return false;
+	private boolean checkEmptyFileds() {
+		System.out.println(nameText.getText());
+		return (
+				nameText.getText().equals("") ||
+				usernameText.getText().equals("") ||
+				String.valueOf(passwordText.getPassword()).equals("") ||
+				String.valueOf(confirmPasswordText.getPassword()).equals("") ||
+				mailText.getText().equals("")
+				);
+	}
+	private boolean matchingPasswords(String p1, String p2) {
+		return (p1.equals(p2));
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
